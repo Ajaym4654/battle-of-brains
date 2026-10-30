@@ -1,7 +1,10 @@
 
 import { getStore } from "@netlify/blobs";
 
-const store = getStore("battle-of-brains-rooms");
+const store = getStore({
+  name: "battle-of-brains-rooms",
+  consistency: "strong"
+});
 const MAX_PLAYERS = 8;
 const QUESTION_TIME = 15_000;
 const ROOM_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
