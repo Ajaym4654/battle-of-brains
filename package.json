@@ -1,0 +1,12 @@
+{
+  "name": "battle-of-brains",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node -e \"console.log('Static game: no compilation required')\""
+  },
+  "dependencies": {
+    "@netlify/blobs": "^9.1.2"
+  }
+}
