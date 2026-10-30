@@ -2,138 +2,153 @@
 import { getStore } from "@netlify/blobs";
 
 const store = getStore("battle-of-brains-rooms");
-const LIMIT = 8;
-const TIME = 15000;
+const MAX_PLAYERS = 8;
+const QUESTION_TIME = 15_000;
+const ROOM_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 const QUESTIONS = [
-  ["Which planet is known as the Red Planet?", ["Venus","Mars","Jupiter","Saturn"], 1],
-  ["What is the largest ocean on Earth?", ["Atlantic","Indian","Arctic","Pacific"], 3],
-  ["How many sides does a hexagon have?", ["5","6","7","8"], 1],
-  ["Who wrote Romeo and Juliet?", ["Charles Dickens","William Shakespeare","Jane Austen","Mark Twain"], 1],
-  ["What is the chemical symbol for gold?", ["Ag","Go","Au","Gd"], 2],
-  ["Which animal is the largest mammal?", ["Elephant","Blue whale","Giraffe","Shark"], 1],
-  ["What is the capital of Japan?", ["Seoul","Beijing","Tokyo","Bangkok"], 2],
-  ["How many players are on a soccer team on the field?", ["9","10","11","12"], 2],
-  ["Which gas do plants absorb?", ["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"], 2],
-  ["Who painted the Mona Lisa?", ["Van Gogh","Picasso","Leonardo da Vinci","Michelangelo"], 2],
-  ["What does CPU stand for?", ["Central Processing Unit","Computer Personal Unit","Central Program Utility","Core Processing User"], 0],
-  ["Which is the smallest prime number?", ["0","1","2","3"], 2],
-  ["Which country is famous for the Eiffel Tower?", ["Italy","France","Spain","Germany"], 1],
-  ["How many colors are in a rainbow?", ["5","6","7","8"], 2],
-  ["Which instrument has keys, pedals and strings?", ["Guitar","Violin","Piano","Flute"], 2]
-].map((q) => ({
-  question: q[0],
-  options: q[1],
-  correctIndex: q[2]
-}));
+  {question:"What is the capital of Australia?",options:["Sydney","Melbourne","Canberra","Perth"],correctIndex:2},
+  {question:"Which planet is known as the Red Planet?",options:["Venus","Mars","Jupiter","Mercury"],correctIndex:1},
+  {question:"How many sides does a hexagon have?",options:["Five","Six","Seven","Eight"],correctIndex:1},
+  {question:"Who wrote Romeo and Juliet?",options:["Charles Dickens","William Shakespeare","Jane Austen","Mark Twain"],correctIndex:1},
+  {question:"What is the largest ocean on Earth?",options:["Atlantic","Indian","Arctic","Pacific"],correctIndex:3},
+  {question:"Which gas do plants absorb from the atmosphere?",options:["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"],correctIndex:2},
+  {question:"What is the chemical symbol for gold?",options:["Ag","Au","Gd","Go"],correctIndex:1},
+  {question:"How many players are on a soccer team on the field?",options:["9","10","11","12"],correctIndex:2},
+  {question:"Which country hosted the 2016 Summer Olympics?",options:["China","Brazil","Japan","Greece"],correctIndex:1},
+  {question:"Which instrument has keys, pedals and strings?",options:["Violin","Flute","Piano","Trumpet"],correctIndex:2},
+  {question:"What does CPU stand for?",options:["Central Processing Unit","Computer Power Utility","Core Program Unit","Central Performance User"],correctIndex:0},
+  {question:"Which language is primarily used to style web pages?",options:["HTML","CSS","SQL","Python"],correctIndex:1},
+  {question:"What is the largest mammal in the world?",options:["African elephant","Blue whale","Giraffe","Hippopotamus"],correctIndex:1},
+  {question:"Which is the smallest prime number?",options:["0","1","2","3"],correctIndex:2},
+  {question:"How many continents are there?",options:["Five","Six","Seven","Eight"],correctIndex:2}
+];
 
-const CATEGORIES = {
-  mixed: "Mixed Challenge",
-  general: "General Knowledge",
-  science: "Science",
-  sports: "Sports",
-  movies: "Movies & Entertainment",
-  technology: "Technology",
-  geography: "Geography"
-};
-
-const json = (data, status = 200) => ({
-  statusCode: status,
-  headers: {
-    "Content-Type": "application/json",
-    "Cache-Control": "no-store"
-  },
-  body: JSON.stringify(data)
-});
-
-const fail = (message, status = 400) =>
-  json({ error: message }, status);
-
-const code = () =>
-  Math.random().toString(36).slice(2, 8).toUpperCase();
-
-async function loadRoom(code) {
-  if (!code) return null;
-  return await store.get(code, { type: "json" });
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store"
+    }
+  });
 }
 
-async function saveRoom(room) {
-  await store.setJSON(room.code, room);
+function cleanName(value) {
+  return String(value || "").trim().replace(/\s+/g, " ").slice(0, 18);
 }
 
-function cleanPlayer(p) {
-  return {
-    id: p.id,
-    name: p.name,
-    ready: p.ready,
-    score: p.score,
-    correct: p.correct
-  };
+function validPlayerId(value) {
+  return typeof value === "string" && value.length >= 1 && value.length <= 100;
+}
+
+function createCode() {
+  let code = "";
+  for (let i = 0; i < 6; i++) {
+    code += ROOM_CODE_CHARS[Math.floor(Math.random() * ROOM_CODE_CHARS.length)];
+  }
+  return code;
 }
 
 function publicRoom(room, playerId) {
-  const sorted = [...room.players].sort((a, b) => b.score - a.score);
-  const current = room.questions[room.questionIndex];
+  const question = room.phase === "question"
+    ? room.questions[room.questionIndex]
+    : null;
 
   return {
-    room: {
-      code: room.code,
-      phase: room.phase,
-      category: room.category,
-      categoryName: CATEGORIES[room.category] || "Mixed Challenge",
-      hostId: room.hostId,
-      round: room.round,
-      questionIndex: room.questionIndex,
-      questionEndsAt: room.questionEndsAt,
-      players: sorted.map(cleanPlayer),
-      currentQuestion:
-        room.phase === "question" && current
-          ? {
-              question: current.question,
-              options: current.options
-            }
-          : null,
-      myAnswer: room.answers?.[playerId]?.answer ?? null,
-      answersCount: Object.keys(room.answers || {}).length
-    }
+    code: room.code,
+    phase: room.phase,
+    hostId: room.hostId,
+    categoryName: "Mixed Challenge",
+    round: room.round,
+    questionIndex: room.questionIndex,
+    questionEndsAt: room.questionEndsAt,
+    currentQuestion: question
+      ? {
+          question: question.question,
+          options: question.options
+        }
+      : null,
+    answersCount: Object.keys(room.answers || {}).length,
+    myAnswer: Object.prototype.hasOwnProperty.call(room.answers || {}, playerId)
+      ? room.answers[playerId].answer
+      : null,
+    players: room.players.map(player => ({
+      id: player.id,
+      name: player.name,
+      score: player.score,
+      correct: player.correct,
+      ready: player.ready
+    }))
   };
 }
 
-function scoreAnswers(room) {
-  for (const player of room.players) {
-    const answer = room.answers[player.id];
-    const q = room.questions[room.questionIndex];
+async function saveRoom(room) {
+  room.updatedAt = Date.now();
+  await store.setJSON(room.code, room);
+}
 
-    if (answer && answer.answer === q.correctIndex) {
-      player.score += 100;
-      player.correct += 1;
+async function getRoom(code) {
+  if (!/^[A-Z0-9]{6}$/.test(code || "")) {
+    throw new Error("Please enter a valid 6-character room code.");
+  }
 
-      if (answer.elapsed <= 5000) player.score += 50;
-      else if (answer.elapsed <= 10000) player.score += 25;
-    }
+  const room = await store.get(code, { type: "json" });
+
+  if (!room) {
+    throw new Error("Room not found. Please check the code or create a new room.");
+  }
+
+  return room;
+}
+
+function findPlayer(room, playerId) {
+  return room.players.find(player => player.id === playerId);
+}
+
+function requirePlayer(room, playerId) {
+  const player = findPlayer(room, playerId);
+  if (!player) throw new Error("You are not in this room. Please join again.");
+  return player;
+}
+
+function requireHost(room, playerId) {
+  requirePlayer(room, playerId);
+  if (room.hostId !== playerId) {
+    throw new Error("Only the room host can perform this action.");
   }
 }
 
-function advanceQuestion(room) {
-  scoreAnswers(room);
+function startQuestion(room) {
+  room.phase = "question";
   room.answers = {};
+  room.questionEndsAt = Date.now() + QUESTION_TIME;
+}
 
-  if (room.questionIndex === 4 ||
-      room.questionIndex === 9 ||
-      room.questionIndex === 14) {
-    room.phase = room.questionIndex === 14
-      ? "finished"
-      : "roundResults";
+function advanceQuestion(room) {
+  if (room.phase !== "question") return;
+
+  if (room.questionIndex === 14) {
+    room.phase = "finished";
+    room.questionEndsAt = null;
+    return;
+  }
+
+  if ((room.questionIndex + 1) % 5 === 0) {
+    room.phase = "roundResults";
+    room.questionEndsAt = null;
     return;
   }
 
   room.questionIndex += 1;
-  room.questionEndsAt = Date.now() + TIME;
+  room.round = Math.floor(room.questionIndex / 5) + 1;
+  startQuestion(room);
 }
 
 async function settleExpired(room) {
   if (
     room.phase === "question" &&
+    room.questionEndsAt &&
     Date.now() >= room.questionEndsAt
   ) {
     advanceQuestion(room);
@@ -141,190 +156,280 @@ async function settleExpired(room) {
   }
 }
 
-export default async (request) => {
-  if (request.method !== "POST") {
-    return fail("Use POST requests.", 405);
+async function handleAction(body) {
+  const action = body.action;
+  const playerId = body.playerId;
+
+  if (!validPlayerId(playerId)) {
+    return json({ error: "Invalid player session. Refresh the page and try again." }, 400);
   }
 
-  try {
-    const body = JSON.parse(request.body || "{}");
-    const { action, playerId, name } = body;
-    let roomCode = body.roomCode || body.code;
+  if (action === "create") {
+    const name = cleanName(body.name);
+    if (!name) return json({ error: "Please enter your display name." }, 400);
 
-    if (!action || !playerId) {
-      return fail("Missing action or player ID.");
+    let code;
+    let existing;
+
+    for (let attempt = 0; attempt < 10; attempt++) {
+      code = createCode();
+      existing = await store.get(code, { type: "json" });
+      if (!existing) break;
     }
 
-    if (action === "create") {
-      if (!name?.trim()) return fail("Enter your name.");
-      if (!Object.hasOwn(CATEGORIES, body.category)) {
-        return fail("Invalid category.");
-      }
+    if (existing) {
+      return json({ error: "Could not create a room. Please try again." }, 503);
+    }
 
-      let room;
-      for (let i = 0; i < 10; i++) {
-        const candidate = code();
-        if (!(await loadRoom(candidate))) {
-          room = {
-            code: candidate,
-            hostId: playerId,
-            category: body.category,
-            phase: "lobby",
-            round: 1,
-            questionIndex: 0,
-            questions: [...QUESTIONS],
-            questionEndsAt: 0,
-            answers: {},
-            players: [{
-              id: playerId,
-              name: name.trim().slice(0, 18),
-              ready: true,
-              score: 0,
-              correct: 0
-            }]
-          };
-          break;
-        }
-      }
+    const room = {
+      code,
+      phase: "lobby",
+      hostId: playerId,
+      round: 1,
+      questionIndex: 0,
+      questionEndsAt: null,
+      questions: QUESTIONS,
+      answers: {},
+      players: [{
+        id: playerId,
+        name,
+        score: 0,
+        correct: 0,
+        ready: true
+      }],
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    };
 
-      if (!room) return fail("Could not create a room. Try again.", 500);
+    await saveRoom(room);
+    return json({ room: publicRoom(room, playerId) });
+  }
 
+  const code = String(body.roomCode || body.code || "").trim().toUpperCase();
+  const room = await getRoom(code);
+
+  await settleExpired(room);
+
+  if (action === "join") {
+    const name = cleanName(body.name);
+    if (!name) return json({ error: "Please enter your display name." }, 400);
+
+    const existingPlayer = findPlayer(room, playerId);
+    if (existingPlayer) {
+      return json({ room: publicRoom(room, playerId) });
+    }
+
+    if (room.phase !== "lobby") {
+      return json({ error: "This game has already started. Join another room." }, 409);
+    }
+
+    if (room.players.length >= MAX_PLAYERS) {
+      return json({ error: "This room is full. Maximum 8 players allowed." }, 409);
+    }
+
+    room.players.push({
+      id: playerId,
+      name,
+      score: 0,
+      correct: 0,
+      ready: false
+    });
+
+    await saveRoom(room);
+    return json({ room: publicRoom(room, playerId) });
+  }
+
+  if (action === "state") {
+    requirePlayer(room, playerId);
+    return json({ room: publicRoom(room, playerId) });
+  }
+
+  if (action === "ready") {
+    requirePlayer(room, playerId);
+
+    if (room.phase !== "lobby") {
+      return json({ error: "The game has already started." }, 409);
+    }
+
+    if (playerId === room.hostId) {
+      return json({ room: publicRoom(room, playerId) });
+    }
+
+    const player = findPlayer(room, playerId);
+    player.ready = Boolean(body.ready);
+
+    await saveRoom(room);
+    return json({ room: publicRoom(room, playerId) });
+  }
+
+  if (action === "start") {
+    requireHost(room, playerId);
+
+    if (room.phase !== "lobby") {
+      return json({ error: "This game has already started." }, 409);
+    }
+
+    if (room.players.length < 2) {
+      return json({ error: "At least 2 players are needed to start." }, 400);
+    }
+
+    if (!room.players.every(player => player.ready)) {
+      return json({ error: "Wait until all players are ready." }, 400);
+    }
+
+    room.round = 1;
+    room.questionIndex = 0;
+    room.answers = {};
+    startQuestion(room);
+
+    await saveRoom(room);
+    return json({ room: publicRoom(room, playerId) });
+  }
+
+  if (action === "answer") {
+    requirePlayer(room, playerId);
+
+    if (room.phase !== "question") {
+      return json({ error: "This question is no longer active." }, 409);
+    }
+
+    if (Date.now() >= room.questionEndsAt) {
+      advanceQuestion(room);
       await saveRoom(room);
-      return json(publicRoom(room, playerId));
+      return json({ room: publicRoom(room, playerId) });
     }
 
-    if (action === "join") {
-      roomCode = String(roomCode || "").toUpperCase();
+    if (Object.prototype.hasOwnProperty.call(room.answers, playerId)) {
+      return json({ error: "You have already answered this question." }, 409);
     }
 
-    const room = await loadRoom(roomCode);
-    if (!room) return fail("Room not found or expired.");
-
-    await settleExpired(room);
-
-    const player = room.players.find(p => p.id === playerId);
-
-    if (action === "join") {
-      if (!name?.trim()) return fail("Enter your name.");
-      if (room.phase !== "lobby") return fail("Game already started.");
-      if (!player && room.players.length >= LIMIT) {
-        return fail("Room is full.");
-      }
-
-      if (!player) {
-        room.players.push({
-          id: playerId,
-          name: name.trim().slice(0, 18),
-          ready: false,
-          score: 0,
-          correct: 0
-        });
-      }
-
-      await saveRoom(room);
-      return json(publicRoom(room, playerId));
+    const answer = Number(body.answer);
+    if (!Number.isInteger(answer) || answer < 0 || answer > 3) {
+      return json({ error: "Invalid answer selection." }, 400);
     }
 
-    if (!player) return fail("You are not in this room.");
+    const question = room.questions[room.questionIndex];
+    const correct = answer === question.correctIndex;
+    let points = 0;
 
-    if (action === "state") {
-      return json(publicRoom(room, playerId));
+    if (correct) {
+      const remaining = Math.max(0, room.questionEndsAt - Date.now());
+      const speedBonus = Math.floor(50 * remaining / QUESTION_TIME);
+      points = 100 + speedBonus;
+
+      const player = findPlayer(room, playerId);
+      player.score += points;
+      player.correct += 1;
     }
 
-    if (action === "ready") {
-      if (room.phase !== "lobby") return fail("Lobby is closed.");
-      if (player.id === room.hostId) return fail("Host is already ready.");
-      player.ready = Boolean(body.ready);
-    }
+    room.answers[playerId] = {
+      answer,
+      correct,
+      points,
+      answeredAt: Date.now()
+    };
 
-    else if (action === "start") {
-      if (playerId !== room.hostId) return fail("Only the host can start.");
-      if (room.players.length < 2) return fail("At least 2 players are required.");
-      if (!room.players.every(p => p.ready)) {
-        return fail("Everyone must be ready.");
-      }
-
-      room.phase = "question";
-      room.questionIndex = 0;
-      room.round = 1;
-      room.answers = {};
-      room.questionEndsAt = Date.now() + TIME;
-    }
-
-    else if (action === "answer") {
-      if (room.phase !== "question") return fail("Question is not active.");
-      if (!Number.isInteger(body.answer) ||
-          body.answer < 0 || body.answer > 3) {
-        return fail("Invalid answer.");
-      }
-      if (room.answers[playerId]) return fail("You already answered.");
-
-      room.answers[playerId] = {
-        answer: body.answer,
-        elapsed: Math.max(0, TIME - (room.questionEndsAt - Date.now()))
-      };
-
-      if (Object.keys(room.answers).length >= room.players.length) {
-        advanceQuestion(room);
-      }
-    }
-
-    else if (action === "next") {
-      if (playerId !== room.hostId) return fail("Only the host can continue.");
-      if (room.phase !== "roundResults") return fail("Round is not complete.");
-
-      room.round += 1;
-      room.questionIndex = (room.round - 1) * 5;
-      room.answers = {};
-      room.phase = "question";
-      room.questionEndsAt = Date.now() + TIME;
-    }
-
-    else if (action === "leave") {
-      room.players = room.players.filter(p => p.id !== playerId);
-      delete room.answers[playerId];
-
-      if (!room.players.length) {
-        await store.delete(room.code);
-        return json({ ok: true });
-      }
-
-      if (room.hostId === playerId) {
-        room.hostId = room.players[0].id;
-        room.players[0].ready = true;
-      }
-
-      if (room.phase === "question" &&
-          Object.keys(room.answers).length >= room.players.length) {
-        advanceQuestion(room);
-      }
-    }
-
-    else if (action === "rematch") {
-      if (playerId !== room.hostId) return fail("Only the host can rematch.");
-
-      room.phase = "lobby";
-      room.round = 1;
-      room.questionIndex = 0;
-      room.answers = {};
-      room.questionEndsAt = 0;
-
-      for (const p of room.players) {
-        p.score = 0;
-        p.correct = 0;
-        p.ready = p.id === room.hostId;
-      }
-    }
-
-    else {
-      return fail("Unknown action.");
+    if (room.players.every(player =>
+      Object.prototype.hasOwnProperty.call(room.answers, player.id)
+    )) {
+      advanceQuestion(room);
     }
 
     await saveRoom(room);
-    return json(publicRoom(room, playerId));
-
-  } catch (error) {
-    console.error("Game function error:", error);
-    return fail("Game server error. Check Netlify function logs.", 500);
+    return json({ room: publicRoom(room, playerId) });
   }
-};
+
+  if (action === "next") {
+    requireHost(room, playerId);
+
+    if (room.phase !== "roundResults") {
+      return json({ error: "There are no round results to advance from." }, 409);
+    }
+
+    room.questionIndex += 1;
+    room.round = Math.floor(room.questionIndex / 5) + 1;
+    startQuestion(room);
+
+    await saveRoom(room);
+    return json({ room: publicRoom(room, playerId) });
+  }
+
+  if (action === "leave") {
+    requirePlayer(room, playerId);
+
+    room.players = room.players.filter(player => player.id !== playerId);
+    delete room.answers[playerId];
+
+    if (room.players.length === 0) {
+      await store.delete(room.code);
+      return json({ left: true });
+    }
+
+    if (room.hostId === playerId) {
+      room.hostId = room.players[0].id;
+      room.players[0].ready = true;
+    }
+
+    if (room.phase === "question" &&
+        room.players.every(player =>
+          Object.prototype.hasOwnProperty.call(room.answers, player.id)
+        )) {
+      advanceQuestion(room);
+    }
+
+    await saveRoom(room);
+    return json({ left: true, room: publicRoom(room, room.players[0].id) });
+  }
+
+  if (action === "rematch") {
+    requireHost(room, playerId);
+
+    if (room.phase !== "finished") {
+      return json({ error: "Finish the current game before starting a rematch." }, 409);
+    }
+
+    room.phase = "lobby";
+    room.round = 1;
+    room.questionIndex = 0;
+    room.questionEndsAt = null;
+    room.answers = {};
+
+    room.players.forEach(player => {
+      player.score = 0;
+      player.correct = 0;
+      player.ready = player.id === room.hostId;
+    });
+
+    await saveRoom(room);
+    return json({ room: publicRoom(room, playerId) });
+  }
+
+  return json({ error: "Unknown game action." }, 400);
+}
+
+export default async function handler(request) {
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
+      }
+    });
+  }
+
+  if (request.method !== "POST") {
+    return json({ error: "Method not allowed. Use POST." }, 405);
+  }
+
+  try {
+    const body = await request.json();
+    return await handleAction(body);
+  } catch (error) {
+    console.error("Battle of Brains function error:", error);
+    return json({
+      error: error?.message || "Unexpected server error."
+    }, 400);
+  }
+}
