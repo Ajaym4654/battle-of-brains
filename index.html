@@ -5,253 +5,173 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#100b2e">
-<meta name="description" content="Battle of Brains - Play multiplayer trivia with your friends.">
+<meta name="description" content="Battle of Brains — real-time multiplayer trivia.">
 <title>Battle of Brains | Think Fast. Win Big.</title>
-
 <style>
-:root{
---bg:#0d0924;--panel:#17113a;--panel2:#21194c;
---purple:#8b5cf6;--blue:#38bdf8;--lime:#b7f34a;
---muted:#b8b0d8;--white:#fff
-}
+:root{--bg:#0d0924;--panel:#17113a;--purple:#8b5cf6;--blue:#38bdf8;--lime:#b7f34a;--muted:#b8b0d8;--white:#fff}
 *{box-sizing:border-box}
-body{
-margin:0;min-height:100vh;color:var(--white);
-font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;
-background:radial-gradient(ellipse at 15% 0%,#38206c 0,transparent 42%),radial-gradient(ellipse at 100% 80%,#103d67 0,transparent 35%),var(--bg)
-}
-button,input,select{font:inherit}
-button{cursor:pointer;border:0}
-button:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
-.wrap{width:min(960px,92vw);margin:auto;padding:28px 0 55px}
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
-.brand{font-weight:950;letter-spacing:.04em;font-size:18px}
-.brand span{color:var(--lime)}
-.pill{border:1px solid #ffffff26;border-radius:999px;padding:8px 12px;color:var(--muted);font-size:12px}
+body{margin:0;min-height:100vh;color:var(--white);font-family:Inter,system-ui,Segoe UI,sans-serif;background:radial-gradient(ellipse at 15% 0%,#38206c 0,transparent 42%),radial-gradient(ellipse at 100% 80%,#103d67 0,transparent 35%),var(--bg)}
+button,input{font:inherit}button{cursor:pointer;border:0}button:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.wrap{width:min(960px,92vw);margin:auto;padding:25px 0 50px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:25px}
+.brand{font-weight:950;letter-spacing:.04em}.brand span{color:var(--lime)}
+.pill{border:1px solid #ffffff26;border-radius:999px;padding:8px 12px;color:var(--muted);font-size:11px}
 .hero{text-align:center;padding:35px 12px 28px}
 .eyebrow{color:var(--lime);font-weight:800;letter-spacing:.2em;font-size:11px}
-.hero h1{
-font-size:clamp(40px,8vw,76px);line-height:.98;margin:13px 0;
-background:linear-gradient(90deg,#fff,#c4b5fd,#67e8f9);
-background-clip:text;color:transparent;letter-spacing:-.06em
-}
-.hero p{color:var(--muted);margin:0;font-size:16px}
-.card{
-background:linear-gradient(145deg,#21194cdd,#14102fef);
-border:1px solid #ffffff20;border-radius:24px;padding:24px;
-box-shadow:0 20px 60px #0005;backdrop-filter:blur(12px)
-}
+.hero h1{font-size:clamp(42px,8vw,76px);line-height:.98;margin:13px 0;background:linear-gradient(90deg,#fff,#c4b5fd,#67e8f9);background-clip:text;color:transparent;letter-spacing:-.06em}
+.hero p{color:var(--muted)}
+.card{background:linear-gradient(145deg,#21194cdd,#14102fef);border:1px solid #ffffff20;border-radius:22px;padding:23px;box-shadow:0 20px 60px #0005}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.field{display:flex;flex-direction:column;gap:8px;margin:12px 0}
-.field label{font-size:12px;color:var(--muted);font-weight:750;letter-spacing:.06em;text-transform:uppercase}
-input,select{
-width:100%;background:#0e0a29;border:1px solid #ffffff24;
-color:white;border-radius:13px;padding:14px 15px;outline:none
-}
+.field{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+label{font-size:12px;color:var(--muted);font-weight:750;text-transform:uppercase;letter-spacing:.06em}
+input,select{width:100%;background:#0e0a29;border:1px solid #ffffff24;color:white;border-radius:12px;padding:14px;outline:none}
 input:focus,select:focus{border-color:var(--blue)}
-.btn{
-padding:14px 18px;border-radius:14px;font-weight:850;
-transition:.18s;display:inline-flex;align-items:center;
-justify-content:center;gap:8px
-}
+.btn{padding:14px 18px;border-radius:13px;font-weight:850;transition:.18s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
 .primary{background:linear-gradient(100deg,#8b5cf6,#4f8df7);color:white}
 .lime{background:var(--lime);color:#17200a}
 .secondary{background:#ffffff12;color:white;border:1px solid #ffffff24}
-.full{width:100%}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-h2{margin:0 0 8px;font-size:24px}
-h3{margin:0;font-size:17px}
-.muted{color:var(--muted)}
-.small{font-size:12px;color:var(--muted)}
+.full{width:100%}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+h2{margin:0 0 8px;font-size:24px}h3{margin:0;font-size:17px}
+.muted{color:var(--muted)}.small{font-size:12px;color:var(--muted)}
 .hidden{display:none!important}
-.roomcode{
-font-size:clamp(32px,8vw,48px);font-weight:950;
-letter-spacing:.18em;color:var(--lime);text-align:center;padding:14px
-}
+.roomcode{font-size:clamp(32px,8vw,48px);font-weight:950;letter-spacing:.18em;color:var(--lime);text-align:center;padding:14px}
 .center{text-align:center}
 .players{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:16px 0}
-.player{
-display:flex;align-items:center;justify-content:space-between;gap:8px;
-padding:12px;background:#ffffff0b;border:1px solid #ffffff14;border-radius:13px
-}
-.player b{overflow-wrap:anywhere}
-.status{font-size:11px;color:var(--lime)}
+.player{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px;background:#ffffff0b;border:1px solid #ffffff14;border-radius:13px}
+.player b{overflow-wrap:anywhere}.status{font-size:11px;color:var(--lime)}
 .topline{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}
 .progress{height:7px;background:#ffffff18;border-radius:9px;overflow:hidden;margin:10px 0 20px}
 .progress>div{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));width:0;transition:width .2s}
 .timer{font-size:34px;font-weight:950;color:var(--lime);min-width:58px;text-align:right}
 .question{font-size:clamp(22px,4vw,32px);line-height:1.2;margin:12px 0 22px}
 .answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.answer{
-background:#ffffff0d;color:white;border:1px solid #ffffff24;
-border-radius:15px;padding:17px;text-align:left;font-weight:750;min-height:64px
-}
+.answer{background:#ffffff0d;color:white;border:1px solid #ffffff24;border-radius:14px;padding:17px;text-align:left;font-weight:750;min-height:64px}
 .answer:hover:not(:disabled){border-color:var(--blue);background:#38bdf822}
-.answer:disabled{opacity:.7;cursor:default}
-.answer.selected{border-color:var(--lime);background:#b7f34a22}
+.answer:disabled{opacity:.7;cursor:default}.answer.selected{border-color:var(--lime);background:#b7f34a22}
 .scorelist{display:flex;flex-direction:column;gap:9px;margin-top:18px}
 .score{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:12px;padding:13px;background:#ffffff0b;border-radius:14px}
-.rank{font-size:20px;font-weight:950;color:var(--lime)}
-.points{font-weight:900;color:#c4b5fd}
-.notice{padding:12px 14px;border-radius:12px;background:#38bdf81a;border:1px solid #38bdf844;color:#d9f4ff;margin:12px 0}
+.rank{font-size:20px;font-weight:950;color:var(--lime)}.points{font-weight:900;color:#c4b5fd}
+.notice{padding:12px 14px;border-radius:12px;background:#38bdf81a;border:1px solid #38bdf844;color:#d9f4ff;margin:12px 0;overflow-wrap:anywhere}
 .error{background:#fb71851a;border-color:#fb718555;color:#ffd9df}
-.winner{font-size:64px;margin:8px}
-.footer{text-align:center;color:#847ba9;font-size:11px;margin-top:26px}
-@media(max-width:620px){
-.grid,.answers{grid-template-columns:1fr}
-.players{grid-template-columns:1fr}
-.card{padding:18px}
-.wrap{padding-top:16px}
-.hero{padding-top:25px}
-header{margin-bottom:12px}
-.topline{align-items:flex-start}
-}
+.winner{font-size:64px;margin:8px}.footer{text-align:center;color:#847ba9;font-size:11px;margin-top:26px}
+@media(max-width:620px){.grid,.answers{grid-template-columns:1fr}.players{grid-template-columns:1fr}.card{padding:18px}.wrap{padding-top:16px}.hero{padding-top:25px}header{margin-bottom:12px}.topline{align-items:flex-start}}
 </style>
 </head>
-
 <body>
 <div class="wrap">
-
 <header>
-<div class="brand">⚡ BATTLE <span>OF BRAINS</span></div>
-<div class="pill">LIVE MULTIPLAYER · 2–8 PLAYERS</div>
+  <div class="brand">⚡ BATTLE <span>OF BRAINS</span></div>
+  <div class="pill">LIVE MULTIPLAYER · 2–8 PLAYERS</div>
 </header>
 
 <section class="hero" id="hero">
-<div class="eyebrow">THINK FAST. ANSWER SMART.</div>
-<h1>Battle of<br>Brains</h1>
-<p>Bring your people. Bring your knowledge. Claim the crown.</p>
+  <div class="eyebrow">THINK FAST. ANSWER SMART.</div>
+  <h1>Battle of<br>Brains</h1>
+  <p>Bring your people. Bring your knowledge. Claim the crown.</p>
 </section>
 
 <main>
-
 <section id="home" class="grid">
+  <div class="card">
+    <h2>Create a room</h2>
+    <p class="muted">Host a private quiz and invite up to 7 friends.</p>
+    <div class="field">
+      <label for="hostName">Your display name</label>
+      <input id="hostName" maxlength="18" placeholder="e.g. Quiz Captain">
+    </div>
+    <div class="field">
+      <label>Game category</label>
+      <input value="Mixed Challenge" disabled>
+      <p class="small">More categories will be added in a future update.</p>
+    </div>
+    <button class="btn primary full" id="createBtn">＋ Create game room</button>
+  </div>
 
-<div class="card">
-<h2>Create a room</h2>
-<p class="muted">Host a private quiz and invite up to 7 friends.</p>
+  <div class="card">
+    <h2>Join a room</h2>
+    <p class="muted">Got a code? Jump into the competition.</p>
+    <div class="field">
+      <label for="joinName">Your display name</label>
+      <input id="joinName" maxlength="18" placeholder="Your name">
+    </div>
+    <div class="field">
+      <label for="roomInput">6-character room code</label>
+      <input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off" style="text-transform:uppercase;letter-spacing:.15em">
+    </div>
+    <button class="btn lime full" id="joinBtn">Join the battle →</button>
+  </div>
 
-<div class="field">
-<label for="hostName">Your display name</label>
-<input id="hostName" maxlength="18" placeholder="e.g. Quiz Captain">
-</div>
-
-<div class="field">
-<label for="category">Choose a category</label>
-<select id="category">
-<option value="mixed">Mixed Challenge</option>
-<option value="general">General Knowledge</option>
-<option value="science">Science</option>
-<option value="sports">Sports</option>
-<option value="movies">Movies & Entertainment</option>
-<option value="technology">Technology</option>
-<option value="geography">Geography</option>
-</select>
-</div>
-
-<button class="btn primary full" id="createBtn">＋ Create game room</button>
-</div>
-
-<div class="card">
-<h2>Join a room</h2>
-<p class="muted">Got a code? Jump into the competition.</p>
-
-<div class="field">
-<label for="joinName">Your display name</label>
-<input id="joinName" maxlength="18" placeholder="Your name">
-</div>
-
-<div class="field">
-<label for="roomInput">6-character room code</label>
-<input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off" style="text-transform:uppercase;letter-spacing:.15em">
-</div>
-
-<button class="btn lime full" id="joinBtn">Join the battle →</button>
-</div>
-
-<div class="card" style="grid-column:1/-1">
-<h3>How to play</h3>
-<p class="muted">3 rounds · 5 questions each · 15 seconds per question. Correct answers earn 100 points, plus up to 50 speed bonus. Highest total score wins. No account needed.</p>
-</div>
-
+  <div class="card" style="grid-column:1/-1">
+    <h3>How to play</h3>
+    <p class="muted">3 rounds · 5 questions each · 15 seconds per question. Correct answers earn 100 points, plus up to 50 speed bonus. Highest total score wins. No account needed.</p>
+  </div>
 </section>
 
 <section id="lobby" class="card hidden">
-<div class="center">
-<div class="eyebrow">YOUR PRIVATE GAME ROOM</div>
-<h2>Waiting for players</h2>
-<p class="muted">Share this code with your friends</p>
-<div class="roomcode" id="codeDisplay">------</div>
-<button class="btn secondary" id="copyBtn">Copy room code</button>
-</div>
-
-<div class="notice" id="lobbyNotice">Waiting for players to join…</div>
-
-<div class="topline">
-<h3>Players <span class="muted" id="playerCount"></span></h3>
-<span class="small" id="hostLabel"></span>
-</div>
-
-<div class="players" id="players"></div>
-
-<div class="actions">
-<button class="btn primary full" id="readyBtn">I'm ready ✓</button>
-<button class="btn lime full hidden" id="startBtn">Start game →</button>
-<button class="btn secondary" id="leaveBtn">Leave room</button>
-</div>
-
-<p class="small center">The host can start when at least 2 players have joined and everyone is ready.</p>
+  <div class="center">
+    <div class="eyebrow">YOUR PRIVATE GAME ROOM</div>
+    <h2>Waiting for players</h2>
+    <p class="muted">Share this code with your friends</p>
+    <div class="roomcode" id="codeDisplay">------</div>
+    <button class="btn secondary" id="copyBtn">Copy room code</button>
+  </div>
+  <div class="notice" id="lobbyNotice">Waiting for players to join…</div>
+  <div class="topline">
+    <h3>Players <span class="muted" id="playerCount"></span></h3>
+    <span class="small" id="hostLabel"></span>
+  </div>
+  <div class="players" id="players"></div>
+  <div class="actions">
+    <button class="btn primary full" id="readyBtn">I'm ready ✓</button>
+    <button class="btn lime full hidden" id="startBtn">Start game →</button>
+    <button class="btn secondary" id="leaveBtn">Leave room</button>
+  </div>
+  <p class="small center">The host can start when at least 2 players have joined and everyone is ready.</p>
 </section>
 
 <section id="game" class="card hidden">
-<div class="topline">
-<div>
-<div class="eyebrow" id="roundLabel">ROUND 1</div>
-<div class="small" id="questionCount">QUESTION 1 OF 15</div>
-</div>
-<div class="timer" id="timer">15</div>
-</div>
-
-<div class="progress"><div id="progressBar"></div></div>
-<div class="small" id="categoryLabel">MIXED CHALLENGE</div>
-<div class="question" id="questionText">Loading question…</div>
-<div class="answers" id="answers"></div>
-<div class="notice hidden" id="answerNotice"></div>
-
-<div class="topline" style="margin-top:20px">
-<span class="small" id="answeredCount">Answers received: 0</span>
-<span class="small" id="myScore">Your score: 0</span>
-</div>
+  <div class="topline">
+    <div><div class="eyebrow" id="roundLabel">ROUND 1</div><div class="small" id="questionCount">QUESTION 1 OF 15</div></div>
+    <div class="timer" id="timer">15</div>
+  </div>
+  <div class="progress"><div id="progressBar"></div></div>
+  <div class="small">MIXED CHALLENGE</div>
+  <div class="question" id="questionText">Loading question…</div>
+  <div class="answers" id="answers"></div>
+  <div class="notice hidden" id="answerNotice"></div>
+  <div class="topline" style="margin-top:20px">
+    <span class="small" id="answeredCount">Answers received: 0</span>
+    <span class="small" id="myScore">Your score: 0</span>
+  </div>
 </section>
 
 <section id="roundResults" class="card hidden">
-<div class="center">
-<div class="eyebrow">ROUND COMPLETE</div>
-<h2 id="roundTitle">Round 1 results</h2>
-<p class="muted">Here's how the room is shaping up.</p>
-</div>
-<div class="scorelist" id="roundScores"></div>
-<div class="actions">
-<button class="btn primary full hidden" id="nextBtn">Next round →</button>
-<div class="notice hidden" id="nextWait">Waiting for the host to continue…</div>
-</div>
+  <div class="center">
+    <div class="eyebrow">ROUND COMPLETE</div>
+    <h2 id="roundTitle">Round 1 results</h2>
+    <p class="muted">Here's how the room is shaping up.</p>
+  </div>
+  <div class="scorelist" id="roundScores"></div>
+  <div class="actions">
+    <button class="btn primary full hidden" id="nextBtn">Next round →</button>
+    <div class="notice hidden" id="nextWait">Waiting for the host to continue…</div>
+  </div>
 </section>
 
 <section id="final" class="card hidden center">
-<div class="eyebrow">THAT'S A WRAP</div>
-<div class="winner">🏆</div>
-<h2 id="winnerName">Champion!</h2>
-<p class="muted">The Battle of Brains champion has been crowned.</p>
-<div class="scorelist" id="finalScores"></div>
-<div class="actions">
-<button class="btn lime full" id="playAgainBtn">Play another game</button>
-<button class="btn secondary full" id="homeBtn">Back to home</button>
-</div>
+  <div class="eyebrow">THAT'S A WRAP</div>
+  <div class="winner">🏆</div>
+  <h2 id="winnerName">Champion!</h2>
+  <p class="muted">The Battle of Brains champion has been crowned.</p>
+  <div class="scorelist" id="finalScores"></div>
+  <div class="actions">
+    <button class="btn lime full" id="playAgainBtn">Play another game</button>
+    <button class="btn secondary full" id="homeBtn">Back to home</button>
+  </div>
 </section>
 
 <div id="globalNotice" class="notice hidden" role="status"></div>
-
 </main>
 <div class="footer">BATTLE OF BRAINS · THINK FAST. WIN BIG.</div>
 </div>
@@ -261,28 +181,24 @@ header{margin-bottom:12px}
 
 const API = "/.netlify/functions/game";
 const $ = id => document.getElementById(id);
+const screens = ["home","lobby","game","roundResults","final"];
 
 let playerId = localStorage.getItem("bob_pid");
-
 if (!playerId) {
-  playerId = crypto.randomUUID();
+  playerId = (crypto.randomUUID ? crypto.randomUUID() : "p-" + Date.now() + "-" + Math.random().toString(36).slice(2));
   localStorage.setItem("bob_pid", playerId);
 }
 
 let state = null;
 let roomCode = null;
 let poller = null;
-let busy = false;
-let lastQuestionKey = "";
-let selectedAnswer = null;
 let timerInterval = null;
-
-const screens = ["home","lobby","game","roundResults","final"];
+let busy = false;
+let selectedAnswer = null;
+let lastQuestionKey = "";
 
 function show(id) {
-  screens.forEach(screen =>
-    $(screen).classList.toggle("hidden", screen !== id)
-  );
+  screens.forEach(screen => $(screen).classList.toggle("hidden", screen !== id));
   $("hero").classList.toggle("hidden", id !== "home");
 }
 
@@ -291,45 +207,33 @@ function notice(message, error = false) {
   el.textContent = message;
   el.classList.remove("hidden");
   el.classList.toggle("error", error);
-
   clearTimeout(notice.timeout);
-  notice.timeout = setTimeout(() => {
-    el.classList.add("hidden");
-  }, 5000);
+  notice.timeout = setTimeout(() => el.classList.add("hidden"), 7000);
 }
 
 async function api(action, data = {}) {
   let response;
-
   try {
     response = await fetch(API, {
       method: "POST",
       headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        action,
-        playerId,
-        roomCode,
-        ...data
-      })
+      body: JSON.stringify({action, playerId, roomCode, ...data})
     });
   } catch {
-    throw new Error("Cannot connect to the game server. Please check your connection.");
+    throw new Error("Cannot connect to the game server. Check your internet connection.");
   }
 
+  const raw = await response.text();
   let result;
-
   try {
-    result = await response.json();
+    result = raw ? JSON.parse(raw) : {};
   } catch {
-    throw new Error(
-      "The game server did not return JSON. Check whether the Netlify Function was deployed."
-    );
+    throw new Error(`Server returned an invalid response (HTTP ${response.status}). Check Netlify Function logs.`);
   }
 
   if (!response.ok) {
-    throw new Error(result.error || "Something went wrong.");
+    throw new Error(result.error || result.message || `Request failed (HTTP ${response.status}).`);
   }
-
   return result;
 }
 
@@ -352,41 +256,36 @@ function stopPolling() {
 
 function startPolling() {
   stopPolling();
-  poll();
   poller = setInterval(poll, 1000);
+  poll();
 }
 
 async function poll() {
   if (!roomCode || busy) return;
-
   try {
     const result = await api("state");
     state = result.room;
     render();
   } catch (error) {
+    notice(error.message, true);
     if (/not found|expired|not in this room/i.test(error.message)) {
       stopPolling();
       roomCode = null;
       state = null;
       show("home");
     }
-    notice(error.message, true);
   }
 }
 
 async function run(action, data = {}) {
   if (busy) return;
-
   busy = true;
-
   try {
     const result = await api(action, data);
-
     if (result.room) {
       state = result.room;
       render();
     }
-
     return result;
   } catch (error) {
     notice(error.message, true);
@@ -397,28 +296,16 @@ async function run(action, data = {}) {
 
 $("createBtn").onclick = async () => {
   const name = $("hostName").value.trim();
-
-  if (!name) {
-    notice("Please enter your name first.", true);
-    $("hostName").focus();
-    return;
-  }
+  if (!name) return notice("Please enter your name first.", true);
 
   setBusy(true);
-
   try {
-    const result = await api("create", {
-      name,
-      category: $("category").value
-    });
-
+    const result = await api("create", {name});
     roomCode = result.room.code;
     state = result.room;
-
     show("lobby");
     render();
     startPolling();
-
     notice("Room created! Share your code with friends.");
   } catch (error) {
     notice(error.message, true);
@@ -431,33 +318,17 @@ $("joinBtn").onclick = async () => {
   const name = $("joinName").value.trim();
   const code = $("roomInput").value.trim().toUpperCase();
 
-  if (!name) {
-    notice("Please enter your name.", true);
-    $("joinName").focus();
-    return;
-  }
-
-  if (!/^[A-Z0-9]{6}$/.test(code)) {
-    notice("Enter a valid 6-character room code.", true);
-    $("roomInput").focus();
-    return;
-  }
+  if (!name) return notice("Please enter your name.", true);
+  if (!/^[A-Z0-9]{6}$/.test(code)) return notice("Enter a valid 6-character room code.", true);
 
   setBusy(true);
-
   try {
-    const result = await api("join", {
-      name,
-      roomCode: code
-    });
-
+    const result = await api("join", {name, roomCode:code});
     roomCode = code;
     state = result.room;
-
     show("lobby");
     render();
     startPolling();
-
     notice("You joined the battle!");
   } catch (error) {
     notice(error.message, true);
@@ -467,26 +338,22 @@ $("joinBtn").onclick = async () => {
 };
 
 $("roomInput").addEventListener("input", event => {
-  event.target.value = event.target.value
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g, "")
-    .slice(0, 6);
+  event.target.value = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6);
 });
 
 $("copyBtn").onclick = async () => {
   try {
     await navigator.clipboard.writeText(roomCode);
-    notice("Room code copied! Share it with your friends.");
+    notice("Room code copied!");
   } catch {
     notice("Your room code is: " + roomCode);
   }
 };
 
-$("readyBtn").onclick = () => {
-  run("ready", {ready: !me()?.ready});
-};
-
+$("readyBtn").onclick = () => run("ready", {ready:!me()?.ready});
 $("startBtn").onclick = () => run("start");
+$("nextBtn").onclick = () => run("next");
+$("playAgainBtn").onclick = () => run("rematch");
 
 $("leaveBtn").onclick = async () => {
   await run("leave");
@@ -497,17 +364,10 @@ $("leaveBtn").onclick = async () => {
   show("home");
 };
 
-$("nextBtn").onclick = () => run("next");
-
-$("playAgainBtn").onclick = () => run("rematch");
-
 $("homeBtn").onclick = async () => {
   if (roomCode) {
-    try {
-      await api("leave");
-    } catch {}
+    try { await api("leave"); } catch {}
   }
-
   stopPolling();
   roomCode = null;
   state = null;
@@ -517,239 +377,126 @@ $("homeBtn").onclick = async () => {
 
 function esc(value) {
   return String(value).replace(/[&<>"']/g, char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   })[char]);
+}
+
+function scoreHTML() {
+  return [...(state?.players || [])]
+    .sort((a,b) => b.score - a.score)
+    .map((player,index) => `
+      <div class="score">
+        <div class="rank">${["🥇","🥈","🥉"][index] || "#" + (index+1)}</div>
+        <div><b>${esc(player.name)}</b><div class="small">${player.correct || 0} correct answers</div></div>
+        <div class="points">${player.score} pts</div>
+      </div>
+    `).join("");
 }
 
 function render() {
   if (!state) return;
 
-  const phase = state.phase;
-
-  if (phase === "lobby") {
+  if (state.phase === "lobby") {
     show("lobby");
-
     $("codeDisplay").textContent = state.code;
     $("playerCount").textContent = `(${state.players.length}/8)`;
 
     const host = state.players.find(p => p.id === state.hostId);
-
-    $("hostLabel").textContent =
-      state.hostId === playerId
-        ? "YOU ARE HOST"
-        : "HOST: " + (host?.name || "Player");
+    $("hostLabel").textContent = state.hostId === playerId ? "YOU ARE HOST" : "HOST: " + (host?.name || "Player");
 
     $("players").innerHTML = state.players.map(player => `
-      <div class="player">
-        <b>${esc(player.name)} ${player.id === state.hostId ? "👑" : ""}</b>
-        <span class="status">${player.ready ? "READY ✓" : "NOT READY"}</span>
-      </div>
+      <div class="player"><b>${esc(player.name)} ${player.id === state.hostId ? "👑" : ""}</b>
+      <span class="status">${player.ready ? "READY ✓" : "NOT READY"}</span></div>
     `).join("");
 
-    $("readyBtn").textContent =
-      me()?.ready ? "Cancel ready" : "I'm ready ✓";
+    $("readyBtn").textContent = me()?.ready ? "Cancel ready" : "I'm ready ✓";
+    $("readyBtn").classList.toggle("hidden", state.hostId === playerId);
+    $("startBtn").classList.toggle("hidden", state.hostId !== playerId);
+    $("startBtn").disabled = state.players.length < 2 || !state.players.every(p => p.ready);
 
-    $("readyBtn").classList.toggle(
-      "hidden",
-      state.hostId === playerId
-    );
-
-    $("startBtn").classList.toggle(
-      "hidden",
-      state.hostId !== playerId
-    );
-
-    $("startBtn").disabled =
-      state.players.length < 2 ||
-      !state.players.every(p => p.ready);
-
-    $("lobbyNotice").textContent =
-      state.players.length < 2
-        ? "Need at least 2 players to start."
-        : state.players.every(p => p.ready)
-          ? "Everyone is ready. Host can start!"
-          : "Waiting for everyone to be ready…";
-
-  } else if (phase === "question") {
+    $("lobbyNotice").textContent = state.players.length < 2
+      ? "Need at least 2 players to start."
+      : state.players.every(p => p.ready)
+        ? "Everyone is ready. Host can start!"
+        : "Waiting for everyone to be ready…";
+  } else if (state.phase === "question") {
     show("game");
     renderQuestion();
-
-  } else if (phase === "roundResults") {
+  } else if (state.phase === "roundResults") {
     clearInterval(timerInterval);
     show("roundResults");
-
-    $("roundTitle").textContent =
-      `Round ${state.round} results`;
-
+    $("roundTitle").textContent = `Round ${state.round} results`;
     $("roundScores").innerHTML = scoreHTML();
-
-    $("nextBtn").classList.toggle(
-      "hidden",
-      state.hostId !== playerId
-    );
-
-    $("nextWait").classList.toggle(
-      "hidden",
-      state.hostId === playerId
-    );
-
-  } else if (phase === "finished") {
+    $("nextBtn").classList.toggle("hidden", state.hostId !== playerId);
+    $("nextWait").classList.toggle("hidden", state.hostId === playerId);
+  } else if (state.phase === "finished") {
     clearInterval(timerInterval);
     show("final");
-
-    const winner = [...state.players].sort(
-      (a,b) => b.score - a.score
-    )[0];
-
-    $("winnerName").textContent =
-      winner ? winner.name + " wins!" : "Champion!";
-
+    const winner = [...state.players].sort((a,b) => b.score-a.score)[0];
+    $("winnerName").textContent = winner ? winner.name + " wins!" : "Champion!";
     $("finalScores").innerHTML = scoreHTML();
   }
 }
 
 function renderQuestion() {
   const question = state.currentQuestion;
-
   if (!question) {
     $("questionText").textContent = "Waiting for the next question…";
     return;
   }
 
-  const key = state.round + "-" + state.questionIndex;
-
+  const key = state.questionIndex;
   if (key !== lastQuestionKey) {
     lastQuestionKey = key;
     selectedAnswer = null;
   }
 
   $("roundLabel").textContent = "ROUND " + state.round;
-
-  $("questionCount").textContent =
-    `QUESTION ${state.questionIndex + 1} OF 15`;
-
-  $("categoryLabel").textContent =
-    (state.categoryName || "Mixed Challenge").toUpperCase();
-
+  $("questionCount").textContent = `QUESTION ${state.questionIndex + 1} OF 15`;
   $("questionText").textContent = question.question;
 
-  const remaining = Math.max(
-    0,
-    Math.ceil((state.questionEndsAt - Date.now()) / 1000)
-  );
-
+  const remaining = Math.max(0, Math.ceil((state.questionEndsAt-Date.now())/1000));
   $("timer").textContent = remaining;
-  $("timer").style.color =
-    remaining <= 5 ? "#fb7185" : "#b7f34a";
+  $("timer").style.color = remaining <= 5 ? "#fb7185" : "#b7f34a";
+  $("progressBar").style.width = ((state.questionIndex+1)/15*100)+"%";
+  $("answeredCount").textContent = `Answers received: ${state.answersCount || 0}/${state.players.length}`;
+  $("myScore").textContent = "Your score: " + (me()?.score || 0);
 
-  $("progressBar").style.width =
-    ((state.questionIndex + 1) / 15 * 100) + "%";
-
-  $("answeredCount").textContent =
-    `Answers received: ${state.answersCount || 0}/${state.players.length}`;
-
-  $("myScore").textContent =
-    "Your score: " + (me()?.score || 0);
-
-  const mine = state.myAnswer;
-  const alreadyAnswered =
-    mine !== undefined && mine !== null;
+  const alreadyAnswered = state.myAnswer !== null && state.myAnswer !== undefined;
 
   $("answers").innerHTML = question.options.map((answer,index) => {
-    const selected =
-      (alreadyAnswered && index === mine) ||
-      (!alreadyAnswered && selectedAnswer === index);
-
-    return `
-      <button
-        class="answer ${selected ? "selected" : ""}"
-        data-i="${index}"
-        ${alreadyAnswered || selectedAnswer !== null || remaining === 0 ? "disabled" : ""}
-      >
-        ${String.fromCharCode(65 + index)}. ${esc(answer)}
-      </button>
-    `;
+    const selected = alreadyAnswered ? index === state.myAnswer : index === selectedAnswer;
+    const disabled = alreadyAnswered || selectedAnswer !== null || remaining === 0;
+    return `<button class="answer ${selected ? "selected" : ""}" data-i="${index}" ${disabled ? "disabled" : ""}>${String.fromCharCode(65+index)}. ${esc(answer)}</button>`;
   }).join("");
 
   $("answers").querySelectorAll("button").forEach(button => {
     button.onclick = () => {
-      if (
-        selectedAnswer !== null ||
-        alreadyAnswered ||
-        remaining <= 0
-      ) return;
-
+      if (selectedAnswer !== null || alreadyAnswered || remaining <= 0) return;
       selectedAnswer = Number(button.dataset.i);
-
-      $("answers").querySelectorAll("button").forEach(b => {
-        b.disabled = true;
-      });
-
+      $("answers").querySelectorAll("button").forEach(b => b.disabled = true);
       button.classList.add("selected");
-
       run("answer", {answer:selectedAnswer});
     };
   });
 
   const answerNotice = $("answerNotice");
-
-  answerNotice.classList.toggle("hidden", !alreadyAnswered);
-
-  if (alreadyAnswered) {
-    answerNotice.textContent =
-      "Answer locked in! Waiting for the other players…";
-  } else if (remaining === 0) {
-    answerNotice.classList.remove("hidden");
-    answerNotice.textContent = "Time is up! Waiting for the server…";
-  }
+  answerNotice.classList.toggle("hidden", !alreadyAnswered && remaining > 0);
+  answerNotice.textContent = alreadyAnswered
+    ? "Answer locked in! Waiting for the other players…"
+    : "Time is up! Waiting for the server…";
 
   clearInterval(timerInterval);
-
   timerInterval = setInterval(() => {
-    if (!state || state.phase !== "question") {
-      clearInterval(timerInterval);
-      return;
-    }
-
-    const seconds = Math.max(
-      0,
-      Math.ceil((state.questionEndsAt - Date.now()) / 1000)
-    );
-
+    if (!state || state.phase !== "question") return clearInterval(timerInterval);
+    const seconds = Math.max(0,Math.ceil((state.questionEndsAt-Date.now())/1000));
     $("timer").textContent = seconds;
-    $("timer").style.color =
-      seconds <= 5 ? "#fb7185" : "#b7f34a";
-
-    if (seconds <= 0) {
-      $("answers").querySelectorAll("button").forEach(button => {
-        button.disabled = true;
-      });
-    }
-  }, 250);
+    $("timer").style.color = seconds <= 5 ? "#fb7185" : "#b7f34a";
+    if (seconds === 0) $("answers").querySelectorAll("button").forEach(b => b.disabled = true);
+  },250);
 }
 
-function scoreHTML() {
-  return [...state.players]
-    .sort((a,b) => b.score - a.score)
-    .map((player,index) => `
-      <div class="score">
-        <div class="rank">${["🥇","🥈","🥉"][index] || ("#" + (index + 1))}</div>
-        <div>
-          <b>${esc(player.name)}</b>
-          <div class="small">${player.correct || 0} correct answers</div>
-        </div>
-        <div class="points">${player.score} pts</div>
-      </div>
-    `).join("");
-}
-
-window.addEventListener("beforeunload", () => {
-  stopPolling();
-});
+window.addEventListener("beforeunload", stopPolling);
 </script>
 </body>
 </html>
